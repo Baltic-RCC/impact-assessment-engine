@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=80.4.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "impact-assessment-engine"
+version = "0.1.4"
+description = "Baltic RCC impact assessment engine"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "nc-data-exchange>=0.2.0",
+    "numpy>=2.0.0",
+    "pandas>=2.2.3",
+    "pydantic>=2.11.5",
+    "pydantic-settings>=2.9.1",
+    "pypowsybl>=1.15.0",
+    "triplets>=0.0.11",
+]
+
+[tool.setuptools]
+packages = [
+    "brcc_pypowsybl_helpers",
+    "impact_assessment_engine",
+    "impact_assessment_reporting",
+]
+
+[[tool.uv.index]]
+name = "rcc-pypi"
+url = "https://artifactory.elering.sise/artifactory/api/pypi/rcc-pypi/simple"
+default = true
+
+[tool.uv]
+allow-insecure-host = ["artifactory.elering.sise"]

@@ -21,6 +21,7 @@ class Parameters(BaseSettings):
     ignore_emerged_islands: bool = True
     # Results thresholds
     threshold_voltage_percent: int | None = 5
+    threshold_current_percent: int | None = 5
     threshold_identification_percent: int | None = 15
     threshold_filtering: int | None = 3
 
@@ -404,6 +405,7 @@ class ImpactAssessment:
         logger.info(f"Applying remedial action: {remedial_action.name}")
 
         # TODO add support for power remedial actions
+        # TODO add support for opposite types of remedial action (not only value == 0/1 but also if val 0 then also 1 and opposite direction, and find the one that works.)
         responses = []
         for alteration in remedial_action.alteration:
             # Apply alteration of remedial action
@@ -597,6 +599,9 @@ class ImpactAssessment:
                                      abs((results_df['p2_post'] - results_df['p2_pre']) / results_df['limit_t2']) * 100)
         results_df['if_filtering_max'] = results_df[['if_filtering1', 'if_filtering2']].max(axis=1)
         results_df['if_filtering_mean'] = results_df[['if_filtering1', 'if_filtering2']].mean(axis=1)
+
+        # Flagging whether TSO is impacted by RA activation based on if max threshold
+        results_df['if_above_threshold'] = results_df['if_filtering1'] >= self.parameters.threshold
 
         results_df.sort_values(by=['name', 'influencing_name', 'contingency_name'], inplace=True)
         self.flow_results_df = results_df
@@ -819,13 +824,13 @@ if __name__ == '__main__':
     contingency_df = pd.read_excel(DEFAULT_COMMON_CONTINGENCY_LIST)
     # contingency_df_filtered = contingency_df[contingency_df.area.isin(['LT', 'LV'])].sample(5)
     # contingency_df_filtered = contingency_df[contingency_df.area.isin(['LT', 'LV', 'EE'])]
-    contingency_df_filtered = contingency_df[contingency_df.area.isin(['LT', 'PL'])]
-    # contingency_df_filtered = contingency_df[contingency_df.co_name.isin(['OCO_LN425'])]
+    # contingency_df_filtered = contingency_df[contingency_df.area.isin(['LT', 'PL'])]
+    contingency_df_filtered = contingency_df[contingency_df.co_name.isin(['OCO_LN367'])]
     contingencies = converters.contingencies_from_dataframe(data=contingency_df_filtered)
 
     # Getting remedial actions
     remedial_action_df = pd.read_excel(DEFAULT_COMMON_REMEDIAL_ACTION_LIST)
-    remedial_action_df_filtered = remedial_action_df[remedial_action_df.ra_name.isin(['RA_LN328_OUT', 'RA_AT-2_GROBINA_IN'])]
+    remedial_action_df_filtered = remedial_action_df[remedial_action_df.ra_name.isin(['RA_LN366'])]
     remedial_actions = converters.remedial_actions_from_dataframe(data=remedial_action_df_filtered)
 
     # Selecting influencing elements
@@ -837,12 +842,12 @@ if __name__ == '__main__':
                           influencing_elements=influencing_elements,
                           assessed_elements=assessed_elements,
                           assessed_nodes=assessed_voltage_levels[assessed_voltage_levels['country'] == 'PL'],
-                          remedial_actions=None,
+                          remedial_actions=remedial_actions,
                           )
 
-    ia.run_outage_flow_influence_assessment()
+    # ia.run_outage_flow_influence_assessment()
     # ia.run_outage_voltage_influence_assessment()
-    # ia.run_remedial_actions_flow_influence_assessment()
+    ia.run_remedial_actions_flow_influence_assessment()
     # ia.max_influence_factors_by_xnec()
 
     # Report diverged/not applied contingencies and influencing elements
