@@ -5,9 +5,9 @@ import numpy as np
 from pydantic_settings import BaseSettings
 from brcc_pypowsybl_helpers.lf_parameters import LF_PARAMETERS
 from brcc_pypowsybl_helpers.helper import (get_network_elements, get_network_elements_by_ids, get_connected_component_counts,
-                                    attr_to_dict, performance_counter)
+                                           attr_to_dict, performance_counter)
 from brcc_pypowsybl_helpers.models import (Contingency, AssessedElement, InfluencingElement, GridSateAlterationRemedialAction,
-                                    PowerRemedialAction, GridSateAlteration)
+                                           PowerRemedialAction, GridSateAlteration)
 from brcc_pypowsybl_helpers import converters
 import logging
 from typing import List, Dict, Any
