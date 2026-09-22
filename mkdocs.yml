@@ -49,11 +49,11 @@ plugins:
 nav:
   - Home: index.md
   - API Reference:
-      - brcc_powsybl_helpers:
-          - converters: api/brcc_powsybl_helpers/converters.md
-          - helper: api/brcc_powsybl_helpers/helper.md
-          - lf_parameters: api/brcc_powsybl_helpers/lf_parameters.md
-          - models: api/brcc_powsybl_helpers/models.md
+      - brcc_pypowsybl_helpers:
+          - converters: api/brcc_pypowsybl_helpers/converters.md
+          - helper: api/brcc_pypowsybl_helpers/helper.md
+          - lf_parameters: api/brcc_pypowsybl_helpers/lf_parameters.md
+          - models: api/brcc_pypowsybl_helpers/models.md
       - impact_assessment_engine:
           - impact_assessment: api/impact_assessment_engine/impact_assessment.md
       - impact_assessment_reporting:

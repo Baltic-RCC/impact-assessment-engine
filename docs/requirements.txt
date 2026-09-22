@@ -2,3 +2,4 @@ mkdocs==1.6.1
 mkdocs-material==9.7.7
 mkdocstrings[python]==1.0.6
 mkdocstrings-python==2.0.9
+nc-data-exchange @ git+https://github.com/Baltic-RCC/NC-Data-Exchange.git@170109cf03137e442d6aef690b65055dc870938d

@@ -1,4 +1,4 @@
-::: brcc_powsybl_helpers.converters
+::: brcc_pypowsybl_helpers.converters
     options:
       filters:
         - "!^_"
