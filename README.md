@@ -27,13 +27,26 @@ Read the documentation for this project here https://baltic-rcc.github.io/impact
 
 **`run_outage_voltage_influence_assessment()`** – Calculates \|V_post − V_pre\| / V_nom · 100 for each assessed bus, influencing element and contingency, and stores the result in `voltage_results_df`.
 
-**`run_remedial_actions_flow_influence_assessment()`** – Calculates \|ΔI_t\| / PATL_t · 100 (or the same with ΔP when the limit is not a current limit) for each remedial action, in the base case and under each contingency. It currently fails at the threshold step (`Parameters.threshold` is not defined).
+**`run_remedial_actions_flow_influence_assessment()`** – Calculates \|ΔI_t\| / PATL_t · 100 (or the same with ΔP when the limit is not a current limit) for each remedial action, in the base case and under each contingency, or in the base case only when no contingencies are given. `if_above_threshold` marks rows where the side 1 factor reaches `threshold_current_percent`.
 
 **`max_influence_factors_by_xnec()` and the `max_if_*` / `threshold_if_*` properties** – Keep the maximum factor per (assessed element, influencing element) pair, or filter rows by a threshold.
 
 **Diagnostic properties** – `diverged_*`, `not_applied_*` and `island_leading_*` list the contingencies, influencing elements and remedial actions that could not be evaluated.
 
 **`impact_assessment_reporting.get_impact_assessment_matrix_rcp()`** – Converts the results into NC ImpactAssessmentMatrix classes, taking the maximum impact per remedial action (or schedule) per impacted system operator.
+
+## Remedial action lookup jobs
+
+The `remedial_action_lookup` folder has four scripts that run on a CGMES model. Each one reads its settings from the `.conf` file of the same name in that folder.
+
+| Script | Settings file | Result |
+| --- | --- | --- |
+| `run_ae_lookup.py` | `ae_lookup.conf` | Assessed element list: lines, transformers and tie line sides at the relevant voltage level |
+| `run_co_lookup.py` | `co_lookup.conf` | Contingency list: N-1 of those elements and of large generators in service |
+| `run_ra_lookup.py` | `ra_lookup.conf` | Topological remedial action candidates, flagged as cross-border relevant by their influence factor on neighbouring TSO elements |
+| `run_ra_assessment.py` | `ra_assessment.conf` | Flow influence factors of a remedial action list, in the base case and under each contingency |
+
+Set `MODEL_PATH` and the other paths in the `.conf` files, then run each script from the repository root, for example `python remedial_action_lookup/run_ae_lookup.py`. The [remedial action lookup guide](https://baltic-rcc.github.io/impact-assessment-engine/guides/remedial_action_lookup/) explains every setting, the outputs and common errors.
 
 ## Not supported (CSAm power and voltage influence assessment)
 

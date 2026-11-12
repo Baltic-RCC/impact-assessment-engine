@@ -11,6 +11,8 @@ theme:
     - navigation.top
     - search.suggest
     - search.highlight
+    - content.code.copy
+    - content.tabs.link
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -24,6 +26,19 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
 
 plugins:
   - search
@@ -48,6 +63,8 @@ plugins:
 
 nav:
   - Home: index.md
+  - Guides:
+      - Remedial action lookup jobs: guides/remedial_action_lookup.md
   - API Reference:
       - brcc_pypowsybl_helpers:
           - converters: api/brcc_pypowsybl_helpers/converters.md
@@ -58,3 +75,6 @@ nav:
           - impact_assessment: api/impact_assessment_engine/impact_assessment.md
       - impact_assessment_reporting:
           - iam_builder: api/impact_assessment_reporting/iam_builder.md
+      - remedial_action_lookup:
+          - job_config: api/remedial_action_lookup/job_config.md
+          - ra_lookup: api/remedial_action_lookup/ra_lookup.md
