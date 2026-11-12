@@ -16,6 +16,7 @@ classifiers = [
 dependencies = [
     "nc-data-exchange>=0.2.0",
     "numpy>=2.0.0",
+    "openpyxl>=3.1.0",
     "pandas>=2.2.3",
     "pydantic>=2.11.5",
     "pydantic-settings>=2.9.1",
@@ -28,6 +29,7 @@ packages = [
     "brcc_pypowsybl_helpers",
     "impact_assessment_engine",
     "impact_assessment_reporting",
+    "remedial_action_lookup",
 ]
 
 [[tool.uv.index]]

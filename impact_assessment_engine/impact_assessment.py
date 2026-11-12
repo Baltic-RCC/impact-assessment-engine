@@ -223,7 +223,7 @@ class ImpactAssessment:
             connected_flags = elements.loc[:, elements.columns.str.contains('connected')]
             disconnected_elements = elements[~connected_flags.all(axis=1)]
             self.disconnected_contingency_elements = contingencies[contingencies.equipment.isin(disconnected_elements.index)]
-            available_contingencies = pd.concat([contingencies, self.disconnected_contingencies]).drop_duplicates(keep=False)
+            available_contingencies = pd.concat([contingencies, self.disconnected_contingency_elements]).drop_duplicates(keep=False)
             available_contingencies = available_contingencies.groupby('mRID').agg({'name': 'first', 'type': 'first', 'equipment': list}).reset_index()
             # BaseModel.model_construct is used to ignore validation step in increase performance (data is already validated in previous steps)
             self.available_contingencies = [Contingency.model_construct(**co) for co in available_contingencies.to_dict('records')]
@@ -567,8 +567,8 @@ class ImpactAssessment:
             return  # exit calculation with without setting results to self
         results.append(bc_results_df)
 
-        # Iterating over each contingency
-        for contingency in self.available_contingencies:
+        # Iterating over each contingency, base case only when contingencies are not given
+        for contingency in self.available_contingencies or []:
             logger.info(f"Calculating remedial actions influence at contingency: {contingency.name}")
 
             # Disconnect contingency element(s)
@@ -578,12 +578,12 @@ class ImpactAssessment:
 
             # Calculating remedial actions influence at current contingency iteration
             co_results_df = self.calculate_remedial_actions_influence(contingency=contingency)
+
+            # Connect back contingency element, also when there are no results so next contingency starts from initial state
+            response = self.connect_contingency(contingency=contingency)
             if co_results_df is None:
                 continue
             results.append(co_results_df)
-
-            # Connect back contingency element
-            response = self.connect_contingency(contingency=contingency)
 
         # Make global results dataframe
         results_df = pd.concat(results)
@@ -601,7 +601,7 @@ class ImpactAssessment:
         results_df['if_filtering_mean'] = results_df[['if_filtering1', 'if_filtering2']].mean(axis=1)
 
         # Flagging whether TSO is impacted by RA activation based on if max threshold
-        results_df['if_above_threshold'] = results_df['if_filtering1'] >= self.parameters.threshold
+        results_df['if_above_threshold'] = results_df['if_filtering1'] >= self.parameters.threshold_current_percent
 
         results_df.sort_values(by=['name', 'influencing_name', 'contingency_name'], inplace=True)
         self.flow_results_df = results_df
